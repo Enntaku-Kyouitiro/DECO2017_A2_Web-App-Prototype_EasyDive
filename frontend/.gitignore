@@ -1,0 +1,4 @@
+node_modules/
+easydive.db
+npm-debug.log*
+.DS_Store
