@@ -1,24 +1,518 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EASY DIVE</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-  <header>
-    <h1>EASY DIVE</h1>
-    <p>A social platform for divers to record and explore dive sites.</p>
-  </header>
 
-  <main>
-    <section>
-      <h2>Welcome</h2>
-      <p>This is the first version of our group project.</p>
-    </section>
-  </main>
+<body class="auth-locked">
 
-  <script src="script.js"></script>
+  <!-- ---------- Login page ---------- -->
+
+  <section class="login-page" id="loginPage">
+    <div class="login-hero-panel">
+      <h1>
+        <span>EASY</span>
+        <span>DIVE</span>
+      </h1>
+
+      <p>Dive smarter, share easier.</p>
+
+      <div class="login-tags">
+        <span>Dive Logs</span>
+        <span>Site Search</span>
+        <span>Diver Profiles</span>
+      </div>
+    </div>
+
+    <div class="login-card">
+      <p class="eyebrow">Welcome back</p>
+
+      <h1>EASY DIVE</h1>
+
+      <p class="hero-text">
+        Log in to record dive conditions, browse community notes, view diver
+        profiles and find local dive shops.
+      </p>
+
+      <form id="loginForm" class="login-form">
+        <label>
+          Username
+          <input
+            id="loginUsername"
+            value="demo"
+            autocomplete="username"
+            required
+          >
+        </label>
+
+        <label>
+          Password
+          <input
+            id="loginPassword"
+            type="password"
+            value="dive123"
+            autocomplete="current-password"
+            required
+          >
+        </label>
+
+        <button class="primary-button" type="submit">
+          Log In
+        </button>
+
+        <p class="form-message" id="loginMessage"></p>
+      </form>
+
+      <div class="demo-note">
+        <strong>Demo account:</strong>
+        username <code>demo</code>, password <code>dive123</code>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- Main app shell ---------- -->
+
+  <div class="app-shell hidden" id="appShell">
+
+    <!-- ---------- Header and navigation ---------- -->
+
+    <header class="site-header">
+      <div>
+        <h1>EASY DIVE</h1>
+        <p>Dive smarter, record easier, share safer.</p>
+      </div>
+
+      <div class="header-actions">
+        <nav class="nav-tabs" aria-label="Main navigation">
+          <button class="nav-button active" data-page="home">
+            Home
+          </button>
+
+          <button class="nav-button" data-page="log">
+            Log Dive
+          </button>
+
+          <button class="nav-button" data-page="explore">
+            Explore Sites
+          </button>
+
+          <button class="nav-button" data-page="shops">
+            Dive Shops
+          </button>
+
+          <button class="nav-button" data-page="profile">
+            Profile
+          </button>
+        </nav>
+
+        <div class="user-pill">
+          <span id="currentUserLabel">demo</span>
+
+          <button
+            class="secondary-button"
+            id="logoutButton"
+            type="button"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ---------- Main content ---------- -->
+
+    <main>
+
+      <!-- ---------- Home page ---------- -->
+
+      <section class="page active" id="page-home">
+        <div class="hero-card">
+          <div class="hero-image-box">
+            <img
+              src="assets/images/hero-diver.jpg"
+              alt="EASY DIVE hero image"
+            >
+          </div>
+
+          <div>
+            <p class="eyebrow">Lightweight social platform for divers</p>
+
+            <h2>
+              Record dive conditions with structured diving-specific options.
+            </h2>
+
+            <p class="hero-text">
+              EASY DIVE helps divers record dive sites, compare real
+              conditions, find common marine life, view diver profiles and
+              discover local dive shops around Australia.
+            </p>
+
+            <button class="primary-button" data-jump="log">
+              Record a Dive
+            </button>
+          </div>
+
+          <div class="hero-stats">
+            <article>
+              <strong id="statLogs">0</strong>
+              <span>Dive logs</span>
+            </article>
+
+            <article>
+              <strong id="statSites">0</strong>
+              <span>Dive sites</span>
+            </article>
+
+            <article>
+              <strong id="statShops">0</strong>
+              <span>Dive shops</span>
+            </article>
+          </div>
+        </div>
+
+        <div class="section-grid">
+          <article class="info-card">
+            <h3>Structured logging</h3>
+            <p>
+              Record current, visibility, temperature, surge, species and notes
+              with clear options.
+            </p>
+          </article>
+
+          <article class="info-card">
+            <h3>Visual site cards</h3>
+            <p>
+              Default dive site cards now include one photo each from your
+              uploaded images.
+            </p>
+          </article>
+
+          <article class="info-card">
+            <h3>Social reference</h3>
+            <p>
+              Click the diver name on cards to view their public contact
+              profile.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ---------- Log Dive page ---------- -->
+
+      <section class="page" id="page-log">
+        <div class="page-title">
+          <p class="eyebrow">Create a record</p>
+          <h2>Log Dive</h2>
+        </div>
+
+        <div class="two-column wide-left">
+          <form class="panel" id="logForm">
+
+            <!-- Location information -->
+
+            <div class="form-row">
+              <label>
+                State / Territory
+                <select id="logState"></select>
+              </label>
+
+              <label>
+                Dive Site
+                <select id="logSite"></select>
+              </label>
+            </div>
+
+            <label class="hidden" id="customSiteGroup">
+              Custom Site Name
+              <input
+                id="logCustomSite"
+                placeholder="Example: A small reef near Manly"
+              >
+            </label>
+
+            <div class="form-row">
+              <label>
+                Dive Date
+                <input type="date" id="logDate">
+              </label>
+
+              <label>
+                Site Type
+                <select id="logSiteType"></select>
+              </label>
+            </div>
+
+            <!-- Dive condition information -->
+
+            <div class="form-row">
+              <label>
+                Current Strength
+                <select id="logCurrent"></select>
+              </label>
+
+              <label>
+                Visibility
+                <select id="logVisibility"></select>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                Water Temperature
+                <select id="logTemp"></select>
+              </label>
+
+              <label>
+                Surge / Surface Condition
+                <select id="logSurge"></select>
+              </label>
+            </div>
+
+            <!-- Marine life and feeling tags -->
+
+            <fieldset>
+              <legend>Common Marine Life Seen</legend>
+
+              <div
+                class="checkbox-grid three-col"
+                id="marineLifeGrid"
+              ></div>
+
+              <label class="inline-input">
+                Add custom species
+                <input
+                  id="logCustomSpecies"
+                  placeholder="Example: tiny orange nudibranch"
+                >
+              </label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Feeling Tags</legend>
+              <div class="checkbox-grid" id="feelingTagsGrid"></div>
+            </fieldset>
+
+            <!-- Notes and image input -->
+
+            <label>
+              Personal Notes
+              <textarea
+                id="logNotes"
+                rows="4"
+                placeholder="What did you notice during the dive?"
+              ></textarea>
+            </label>
+
+            <label>
+              Image Link / Upload Placeholder
+              <input
+                id="logImage"
+                placeholder="Paste image URL or leave blank"
+              >
+              <small>
+                Real image upload can be added later. This prototype keeps it
+                simple.
+              </small>
+            </label>
+
+            <div class="safety-note">
+              <strong>Safety note:</strong>
+              EASY DIVE records community observations only. Divers should
+              still check local conditions and professional advice.
+            </div>
+
+            <button class="primary-button" type="submit">
+              Save Dive Log
+            </button>
+
+            <p class="form-message" id="formMessage"></p>
+          </form>
+
+          <!-- Live preview panel -->
+
+          <aside class="panel preview-card">
+            <h3>Live Log Preview</h3>
+
+            <p class="muted">
+              This preview updates before saving.
+            </p>
+
+            <div class="preview-image-box">
+              <img
+                id="prevImage"
+                src="assets/images/hero-diver.jpg"
+                alt="Dive preview image"
+              >
+            </div>
+
+            <article class="log-card compact" id="livePreview"></article>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ---------- Explore Sites page ---------- -->
+
+      <section class="page" id="page-explore">
+        <div class="page-title">
+          <p class="eyebrow">Community information</p>
+          <h2>Explore Dive Sites</h2>
+          <p class="muted">
+            Search community logs by location, site type, difficulty and marine
+            life.
+          </p>
+        </div>
+
+        <div class="filter-bar">
+          <input
+            id="exploreKeyword"
+            placeholder="Search by site name, species or diver"
+          >
+
+          <select id="exploreState"></select>
+          <select id="exploreType"></select>
+          <select id="exploreDifficulty"></select>
+
+          <button
+            class="primary-button"
+            id="exploreSearchBtn"
+            type="button"
+          >
+            Search
+          </button>
+        </div>
+
+        <h3>Dive Sites</h3>
+        <div class="card-grid" id="siteCards"></div>
+
+        <h3>Recent Dive Logs</h3>
+        <div class="card-grid" id="logCards"></div>
+      </section>
+
+      <!-- ---------- Dive Shops page ---------- -->
+
+      <section class="page" id="page-shops">
+        <div class="page-title">
+          <p class="eyebrow">Local resources</p>
+          <h2>Local Dive Shops</h2>
+          <p class="muted">
+            Select an Australian region to find local dive shop contact cards.
+          </p>
+        </div>
+
+        <div class="region-btns" id="regionBtns"></div>
+        <div class="card-grid" id="shopCards"></div>
+      </section>
+
+      <!-- ---------- Profile page ---------- -->
+
+      <section class="page" id="page-profile">
+        <div class="page-title">
+          <p class="eyebrow">Logged-in user</p>
+          <h2>Profile</h2>
+        </div>
+
+        <div class="two-column">
+          <article
+            class="panel profile-view"
+            id="profileView"
+          ></article>
+
+          <form class="panel" id="profileForm">
+            <label>
+              Username
+              <input id="profUsername">
+            </label>
+
+            <label>
+              Location
+              <input id="profLocation" placeholder="Sydney, NSW">
+            </label>
+
+            <div class="form-row">
+              <label>
+                Certification
+                <select id="profCert"></select>
+              </label>
+
+              <label>
+                Experience Level
+                <select id="profExp"></select>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                Dive Count
+                <select id="profDiveCount"></select>
+              </label>
+
+              <label>
+                Contact Visibility
+                <select id="profVisibility"></select>
+              </label>
+            </div>
+
+            <label>
+              Online Contact Link
+              <input id="profContact">
+            </label>
+
+            <fieldset>
+              <legend>Interest Tags</legend>
+              <div class="checkbox-grid" id="interestTagsGrid"></div>
+            </fieldset>
+
+            <button class="primary-button" type="submit">
+              Update Profile
+            </button>
+
+            <p class="form-message" id="profileMessage"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- ---------- Footer ---------- -->
+
+    <footer>
+      <p>
+        EASY DIVE prototype — HTML + CSS + JavaScript + MojoJS + SQLite
+      </p>
+    </footer>
+
+    <!-- ---------- User profile modal ---------- -->
+
+    <div
+      class="modal-backdrop hidden"
+      id="userModal"
+      aria-hidden="true"
+    >
+      <article
+        class="user-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="userModalName"
+      >
+        <button
+          class="modal-close"
+          id="closeUserModal"
+          type="button"
+          aria-label="Close user profile"
+        >
+          ×
+        </button>
+
+        <p class="eyebrow">Diver profile</p>
+        <div id="userModalContent"></div>
+      </article>
+    </div>
+  </div>
+
+  <!-- ---------- JavaScript ---------- -->
+
+  <script src="js/script.js"></script>
 </body>
 </html>
