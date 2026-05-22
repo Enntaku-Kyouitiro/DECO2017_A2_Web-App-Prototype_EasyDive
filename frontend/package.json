@@ -1,0 +1,14 @@
+{
+  "name": "easy-dive-site-images",
+  "version": "1.0.0",
+  "description": "Beginner-friendly EASY DIVE prototype with site card images, MojoJS and SQLite.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js server -l http://*:3000",
+    "dev": "node --watch server.js server -l http://*:3000"
+  },
+  "dependencies": {
+    "@mojojs/core": "^1.26.14",
+    "sql.js": "^1.11.0"
+  }
+}
