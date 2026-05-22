@@ -516,3 +516,485 @@ function renderShops() {
       .join('') ||
     '<p class="muted">No shops found for this region.</p>';
 }
+
+/* ---------- User and author helpers ---------- */
+
+function findUser(id) {
+  return users.find(u => String(u.id) === String(id));
+}
+
+function authorButton(id, name, label = 'Posted by') {
+  if (!id && !name) {
+    return '';
+  }
+
+  return `
+    <div class="author-row">
+      <span>${escapeHtml(label)}</span>
+
+      <button
+        class="author-link"
+        data-user-id="${escapeHtml(id || '')}"
+        type="button"
+      >
+        ${escapeHtml(name || findUser(id)?.display_name || 'Unknown diver')}
+      </button>
+    </div>
+  `;
+}
+
+/* ---------- User profile modal ---------- */
+
+async function openUserModal(id) {
+  let user = findUser(id);
+
+  if (!user && id) {
+    try {
+      user = await api(`/api/users/${id}`);
+      users.push(user);
+    } catch (err) {
+      $('#userModalContent').innerHTML = `
+        <p class="form-message">
+          ${escapeHtml(err.message)}
+        </p>
+      `;
+    }
+  }
+
+  if (!user) {
+    return;
+  }
+
+  const show = user.contact_visibility !== 'Private';
+
+  $('#userModalContent').innerHTML = `
+    <h2 id="userModalName">
+      ${escapeHtml(user.display_name)}
+    </h2>
+
+    <p class="meta">
+      ${escapeHtml(user.location || 'Location not shared')}
+      ·
+      ${escapeHtml(user.certification || 'Certification not listed')}
+    </p>
+
+    <p>
+      ${escapeHtml(user.bio || 'This diver has not added a bio yet.')}
+    </p>
+
+    <div class="modal-info-grid">
+      <div>
+        <strong>Experience</strong>
+        <span>${escapeHtml(user.experience_level || '-')}</span>
+      </div>
+
+      <div>
+        <strong>Visibility</strong>
+        <span>${escapeHtml(user.contact_visibility || 'Public')}</span>
+      </div>
+    </div>
+
+    ${
+      show
+        ? `
+          <p>
+            <strong>Email:</strong>
+            ${escapeHtml(user.email || 'Not provided')}
+          </p>
+
+          <p>
+            <strong>Contact:</strong>
+            ${escapeHtml(user.contact_link || 'Not provided')}
+          </p>
+        `
+        : '<p><strong>Contact:</strong> Private</p>'
+    }
+
+    <div class="badge-list">
+      ${badges(user.interest_tags || '')}
+    </div>
+  `;
+
+  $('#userModal').classList.remove('hidden');
+  $('#userModal').setAttribute('aria-hidden', 'false');
+}
+
+function closeUserModal() {
+  $('#userModal').classList.add('hidden');
+  $('#userModal').setAttribute('aria-hidden', 'true');
+}
+
+/* ---------- Render profile page ---------- */
+
+function renderProfile() {
+  $('#profileView').innerHTML = `
+    <h3>${escapeHtml(profile.username)}</h3>
+
+    <p class="meta">
+      ${escapeHtml(profile.location)}
+      ·
+      ${escapeHtml(profile.certification)}
+    </p>
+
+    <div class="profile-stats-grid">
+      <div>
+        <strong>${escapeHtml(profile.dives_logged)}</strong>
+        <span>Dives logged</span>
+      </div>
+
+      <div>
+        <strong>${escapeHtml(profile.sites_visited)}</strong>
+        <span>Sites visited</span>
+      </div>
+
+      <div>
+        <strong>${escapeHtml(profile.species_seen)}</strong>
+        <span>Species seen</span>
+      </div>
+
+      <div>
+        <strong>${escapeHtml(profile.buddy_links)}</strong>
+        <span>Buddy links</span>
+      </div>
+    </div>
+
+    <p>
+      <strong>Experience:</strong>
+      ${escapeHtml(profile.experience_level)}
+    </p>
+
+    <p>
+      <strong>Dive count:</strong>
+      ${escapeHtml(profile.dive_count)}
+    </p>
+
+    <p>
+      <strong>Contact:</strong>
+      ${escapeHtml(profile.contact_link)}
+    </p>
+
+    <div class="badge-list">
+      ${badges(profile.interest_tags)}
+    </div>
+  `;
+
+  $('#profUsername').value = profile.username || '';
+  $('#profLocation').value = profile.location || '';
+  $('#profCert').value = profile.certification || 'Open Water';
+  $('#profExp').value = profile.experience_level || 'Beginner';
+  $('#profDiveCount').value = profile.dive_count || '11–30';
+  $('#profVisibility').value = profile.contact_visibility || 'Public';
+  $('#profContact').value = profile.contact_link || '';
+
+  setChecked('interest', profile.interest_tags || '');
+}
+
+/* ---------- Create a dive log card ---------- */
+
+function logCard(log) {
+  const species = [
+    log.marine_life,
+    log.custom_species
+  ]
+    .filter(Boolean)
+    .join(', ');
+
+  const img = log.image_link
+    ? `
+      <div class="site-thumb">
+        <img
+          src="${escapeHtml(log.image_link)}"
+          alt="${escapeHtml(log.site)}"
+        >
+      </div>
+    `
+    : '';
+
+  return `
+    <article class="log-card">
+      ${img}
+
+      <h3>${escapeHtml(log.site)}</h3>
+
+      <p class="meta">
+        ${escapeHtml(log.state || 'Unknown state')}
+        ·
+        ${escapeHtml(log.site_type || 'Unknown type')}
+        ·
+        ${escapeHtml(log.dive_date || log.created_at || '')}
+      </p>
+
+      <p>
+        <strong>Current:</strong>
+        ${escapeHtml(log.current_strength || '-')}
+      </p>
+
+      <p>
+        <strong>Visibility:</strong>
+        ${escapeHtml(log.visibility || '-')}
+      </p>
+
+      <p>
+        <strong>Temperature:</strong>
+        ${escapeHtml(log.water_temperature || '-')}
+      </p>
+
+      <p>
+        <strong>Surge:</strong>
+        ${escapeHtml(log.surge_condition || '-')}
+      </p>
+
+      <div class="badge-list">
+        ${badges(species)}
+      </div>
+
+      <div class="badge-list soft">
+        ${badges(log.feeling_tags || '')}
+      </div>
+
+      <p>${escapeHtml(log.notes || '')}</p>
+
+      ${authorButton(
+        log.user_id || currentUser?.id,
+        log.author_name || currentUser?.display_name,
+        'Logged by'
+      )}
+    </article>
+  `;
+}
+
+/* ---------- Live dive log preview ---------- */
+
+function updateLivePreview() {
+  const site =
+    $('#logSite').value === 'Custom site'
+      ? $('#logCustomSite').value
+      : $('#logSite').value;
+
+  const image =
+    $('#logImage').value.trim() ||
+    sites.find(s => s.name === site)?.image_path ||
+    'assets/images/hero-diver.jpg';
+
+  $('#prevImage').src = image;
+
+  $('#livePreview').innerHTML = logCard({
+    site: site || 'Dive site name',
+    state: $('#logState').value || 'State',
+    site_type: $('#logSiteType').value || 'Site type',
+    dive_date: $('#logDate').value || new Date().toISOString().slice(0, 10),
+    current_strength: $('#logCurrent').value,
+    visibility: $('#logVisibility').value,
+    water_temperature: $('#logTemp').value,
+    surge_condition: $('#logSurge').value,
+    marine_life: getChecked('marine').join(', '),
+    custom_species: $('#logCustomSpecies').value,
+    feeling_tags: getChecked('feeling').join(', '),
+    notes: $('#logNotes').value || 'Your personal notes will appear here.',
+    image_link: image,
+    user_id: currentUser?.id,
+    author_name: currentUser?.display_name
+  });
+}
+
+/* ---------- Save new dive log ---------- */
+
+async function saveLog(e) {
+  e.preventDefault();
+
+  const site =
+    $('#logSite').value === 'Custom site'
+      ? $('#logCustomSite').value
+      : $('#logSite').value;
+
+  const defaultImg =
+    sites.find(s => s.name === site)?.image_path ||
+    '';
+
+  const payload = {
+    userId: currentUser?.id || 1,
+    state: $('#logState').value,
+    site,
+    customSite:
+      $('#logSite').value === 'Custom site'
+        ? $('#logCustomSite').value
+        : '',
+    diveDate: $('#logDate').value,
+    siteType: $('#logSiteType').value,
+    currentStrength: $('#logCurrent').value,
+    visibility: $('#logVisibility').value,
+    waterTemperature: $('#logTemp').value,
+    surgeCondition: $('#logSurge').value,
+    marineLife: getChecked('marine'),
+    customSpecies: $('#logCustomSpecies').value,
+    feelingTags: getChecked('feeling'),
+    notes: $('#logNotes').value,
+    imageLink: $('#logImage').value || defaultImg
+  };
+
+  try {
+    await api('/api/logs', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    $('#formMessage').textContent = 'Saved successfully.';
+
+    $('#logForm').reset();
+    updateDiveSiteOptions();
+
+    logs = await api('/api/logs');
+
+    renderHomeStats();
+    renderLogs();
+    updateLivePreview();
+  } catch (err) {
+    $('#formMessage').textContent = err.message;
+  }
+}
+
+/* ---------- Save profile changes ---------- */
+
+async function saveProfile(e) {
+  e.preventDefault();
+
+  const payload = {
+    username: $('#profUsername').value,
+    location: $('#profLocation').value,
+    certification: $('#profCert').value,
+    experienceLevel: $('#profExp').value,
+    diveCount: $('#profDiveCount').value,
+    contactVisibility: $('#profVisibility').value,
+    contactLink: $('#profContact').value,
+    interestTags: getChecked('interest')
+  };
+
+  try {
+    await api('/api/profile', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    profile = await api('/api/profile');
+    users = await api('/api/users');
+
+    renderProfile();
+    renderSites();
+    renderLogs();
+
+    $('#profileMessage').textContent = 'Profile updated.';
+  } catch (err) {
+    $('#profileMessage').textContent = err.message;
+  }
+}
+
+/* ---------- Display helpers ---------- */
+
+function badges(text = '') {
+  return String(text)
+    .split(',')
+    .map(x => x.trim())
+    .filter(Boolean)
+    .map(x => `<span class="badge">${escapeHtml(x)}</span>`)
+    .join('');
+}
+
+function escapeHtml(v = '') {
+  return String(v)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+/* ---------- Event listeners ---------- */
+
+$('#loginForm').addEventListener('submit', login);
+$('#logoutButton').addEventListener('click', logout);
+
+$$('.nav-button').forEach(b => {
+  b.addEventListener('click', () => {
+    showPage(b.dataset.page);
+  });
+});
+
+$$('[data-jump]').forEach(b => {
+  b.addEventListener('click', () => {
+    showPage(b.dataset.jump);
+  });
+});
+
+$('#logForm').addEventListener('submit', saveLog);
+$('#profileForm').addEventListener('submit', saveProfile);
+
+$('#logState').addEventListener('change', () => {
+  updateDiveSiteOptions();
+  updateLivePreview();
+});
+
+$('#logSite').addEventListener('change', () => {
+  toggleCustomSite();
+  updateLivePreview();
+});
+
+[
+  '#logCustomSite',
+  '#logDate',
+  '#logSiteType',
+  '#logCurrent',
+  '#logVisibility',
+  '#logTemp',
+  '#logSurge',
+  '#logCustomSpecies',
+  '#logNotes',
+  '#logImage'
+].forEach(s => {
+  $(s).addEventListener('input', updateLivePreview);
+});
+
+$('#marineLifeGrid').addEventListener('change', updateLivePreview);
+$('#feelingTagsGrid').addEventListener('change', updateLivePreview);
+
+[
+  '#exploreKeyword',
+  '#exploreState',
+  '#exploreType',
+  '#exploreDifficulty'
+].forEach(s => {
+  $(s).addEventListener('input', () => {
+    renderSites();
+    renderLogs();
+  });
+});
+
+$('#exploreSearchBtn').addEventListener('click', () => {
+  renderSites();
+  renderLogs();
+});
+
+document.addEventListener('click', e => {
+  const a = e.target.closest('.author-link');
+
+  if (a) {
+    openUserModal(a.dataset.userId);
+  }
+});
+
+$('#closeUserModal').addEventListener('click', closeUserModal);
+
+$('#userModal').addEventListener('click', e => {
+  if (e.target.id === 'userModal') {
+    closeUserModal();
+  }
+});
+
+/* ---------- Start application ---------- */
+
+checkLoginState();
