@@ -1,19 +1,19 @@
-# EASY DIVE
+## Demo account
 
-EASY DIVE is a web app prototype for divers to record dive logs, explore dive site information, and find local dive shops.
+```text
+username: demo
+password: dive123
+```
 
-## Current Features Planned
+## Run
 
-- User login
-- Dive log recording
-- Dive site search
-- Marine life selection
-- Personal notes
-- Local dive shop cards
-- User profile tags
+```bash
+npm install --no-audit --no-fund
+npm start
+```
 
-## Team Workflow
+Open:
 
-Please do not edit the main branch directly.
-
-Each member should create their own branch, make changes, commit, push, and then create a pull request.
+```text
+http://localhost:3000
+```
