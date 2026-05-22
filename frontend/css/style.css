@@ -460,3 +460,274 @@ textarea {
   object-fit: cover;
   display: block;
 }
+
+/* ---------- Site cards ---------- */
+
+.site-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.site-card-content {
+  padding: 20px 22px 22px;
+}
+
+.site-thumb {
+  height: 190px;
+  margin: 0;
+  border-radius: 0;
+}
+
+/* ---------- Explore filters ---------- */
+
+.filter-bar {
+  padding: 14px;
+  margin-bottom: 22px;
+  display: grid;
+  grid-template-columns: 1.2fr repeat(3,minmax(130px,.7fr)) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.card-detail {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  margin: 12px 0;
+  border-radius: 12px;
+  background: #f6fbff;
+  border: 1px solid #d9ebfa;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ---------- Badges ---------- */
+
+.badge-list {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #e3f2fd;
+  color: #0d47a1;
+  border: 1px solid #bbdefb;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.badge-list.soft .badge {
+  background: #f3f7fb;
+  color: #35536f;
+  border-color: #d8e3ee;
+}
+
+/* ---------- Region buttons ---------- */
+
+.region-btns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.region-btn {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 9px 15px;
+  background: #fff;
+  color: var(--navy);
+  cursor: pointer;
+  font-weight: 800;
+  box-shadow: 0 4px 14px rgba(11,29,58,.08);
+}
+
+.region-btn:hover,
+.region-btn.active {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+
+/* ---------- Dive shop cards ---------- */
+
+.shop-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.shop-thumb {
+  height: 145px;
+  margin: 0;
+  border-radius: 0;
+}
+
+.shop-content {
+  padding: 20px 22px 22px;
+}
+
+/* ---------- Profile ---------- */
+
+.profile-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.profile-stats-grid div {
+  padding: 14px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #d9ebfa;
+}
+
+.profile-stats-grid strong {
+  display: block;
+  color: var(--blue);
+  font-size: 26px;
+  line-height: 1;
+}
+
+/* ---------- Author links ---------- */
+
+.author-row {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.author-link {
+  border: 0;
+  background: #eaf5ff;
+  color: var(--blue);
+  border-radius: 999px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+/* ---------- User modal ---------- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(3,15,35,.62);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.user-modal-card {
+  width: min(520px,100%);
+  background: rgba(255,255,255,.96);
+  border-radius: 24px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.28);
+  padding: 28px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: #eaf5ff;
+  color: var(--navy);
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.modal-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.modal-info-grid div {
+  border: 1px solid #d9ebfa;
+  background: #f6fbff;
+  border-radius: 14px;
+  padding: 12px;
+}
+
+/* ---------- Footer ---------- */
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  padding: 24px;
+}
+
+/* ---------- Responsive layout ---------- */
+
+@media (max-width: 1100px) {
+  .filter-bar {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .site-header {
+    height: auto;
+    padding: 14px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .header-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .hero-card,
+  .two-column,
+  .wide-left {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-stats,
+  .section-grid,
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-stats {
+    padding: 0 24px 28px;
+  }
+
+  .checkbox-grid,
+  .checkbox-grid.three-col,
+  .form-row,
+  .filter-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-card {
+    position: static;
+  }
+
+  .hero-image-box {
+    min-height: 260px;
+  }
+}
