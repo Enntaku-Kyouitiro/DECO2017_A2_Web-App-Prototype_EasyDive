@@ -1,0 +1,1 @@
+console.log("EASY DIVE project loaded.");
